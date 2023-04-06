@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="en" class="h-100">
+    <head>
+      <meta charset="utf-8">
+
+      <title>Sticky Footer Navbar Template · Bootstrap v5.3</title>
+      <link href="../static/css/bootstrap.css" rel="stylesheet" crossorigin="anonymous">
+
+      <!— Custom styles for this template —>
+      <link href="../static/css/my.css" rel="stylesheet">
+    </head>
+    <body class="d-flex flex-column h-100">
+
+      <header>
+        <!— Fixed navbar —>
+        <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+          <div class="container-fluid">
+            <a class="navbar-brand fs-3" href="index.html">Ask me!</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+              <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarCollapse">
+              <form class="d-flex mx-left col-8" role="search">
+                <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+                <button class="btn btn-outline-success" type="submit">ASK</button>
+              </form>
+            </div>
+            <div>
+              <div class="row">
+                  <div class="col settings-column">
+                      <a class="navbar-brand fs-6" href="#">log in</a>
+                      <a class="navbar-brand fs-6" href="#">register</a>
+                    </div>
+              </div>
+            </div>
+          </div>
+        </nav>
+      </header>
+
+<!-- Begin page content -->
+<main class="flex-shrink-0">
+  <div class="container">
+
+    <div class="row">
+      <div class="col-9">
+        <div style="border-top: 1px solid black; margin-top: 20px;"></div>
+          <div class="row new-questions-title">
+          <div class="col-3">
+              <div class="question-avatar">
+                <img src="../static/img/avatar1.jpg" alt="avatar">
+              </div>
+            </div>
+            <div class="col-6">
+              <h2>How to build a moon park?</h2>
+              <div class="question-text">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Iaculis urna id volutpat lacus laoreet non curabitur...</div>
+             <div class="row">
+               <div class="col-8">
+                   Tags:
+                 <a href="#">black_jack</a>,
+                 <a href="#">black_jack</a>
+               </div>
+             </div>
+            </div>
+            <div class="col-2">
+              <div class="input-group">
+                <span class="input-group-btn">
+                  <button class="btn btn-default" type="button" id="minus-btn-1">-</button>
+                </span>
+                <input type="text" class="form-control" id="number-input-1" value="0">
+                <span class="input-group-btn">
+                  <button class="btn btn-default" type="button" id="plus-btn-1">+</button>
+                </span>
+              </div>
+            </div>
+        </div>
+        <div style="border-top: 1px solid black; margin-top: 20px; margin-bottom: 20px"></div>
+
+
+        <div class="question">
+          <div class="row">
+            <div class="col-3">
+              <div class="question-avatar stranger-answer-avatar">
+                <img src="../static/img/avatar2.png" alt="avatar">
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="question-text">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Iaculis urna id volutpat lacus laoreet non curabitur...</div>
+             <div class="row correct-check">
+               <div class="col-3">
+                  <input class="form-check-input" type="checkbox" value="" id="invalidCheck2" required>
+                  <label class="form-check-label" for="invalidCheck2">
+                    Correct
+                  </label>
+                </div>
+             </div>
+            </div>
+            <div class="col-2">
+              <div class="input-group">
+                <span class="input-group-btn">
+                  <button class="btn btn-default" type="button" id="minus-btn-2">-</button>
+                </span>
+                <input type="text" class="form-control" id="number-input-2" value="0">
+                <span class="input-group-btn">
+                  <button class="btn btn-default" type="button" id="plus-btn-2">+</button>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="question">
+          <div class="row">
+            <div class="col-3">
+              <div class="question-avatar stranger-answer-avatar">
+                <img src="../static/img/avatar3.jpg" alt="avatar">
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="question-text">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Iaculis urna id volutpat lacus laoreet non curabitur...</div>
+             <div class="row correct-check">
+               <div class="col-3">
+                  <input class="form-check-input" type="checkbox" value="" id="invalidCheck1" required>
+                  <label class="form-check-label" for="invalidCheck2">
+                    Correct
+                  </label>
+                </div>
+             </div>
+            </div>
+            <div class="col-2">
+              <div class="input-group">
+                <span class="input-group-btn">
+                  <button class="btn btn-default" type="button" id="minus-btn-3">-</button>
+                </span>
+                <input type="text" class="form-control" id="number-input-3" value="0">
+                <span class="input-group-btn">
+                  <button class="btn btn-default" type="button" id="plus-btn-3">+</button>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div style="border-top: 1px solid black; margin-bottom: 20px; margin-top: 20px "></div>
+        <div class="NewAnswer row">
+          <textarea class="form-control" id="NewQuestionText" rows="6" placeholder="Enter your answer here.."></textarea>
+          <div class="NewAnswer mt-3 mb-3"><button class="btn btn-dark" type="submit">Answer</button></div>
+        </div>
+      </div>
+
+      <div class="col-3 right-col">
+        <div class="popular-tags">
+          <h2 class="title-popular-tags">Popular Tags</h2>
+          <div class="row">
+            <div class="col popular-tag">
+              <a href="#" class="link-dark">perl</a>
+            </div>
+            <div class="col popular-tag">
+              <a href="#" class="link-danger fw-bold">python</a>
+            </div>
+            <div class="col popular-tag">
+              <a href="#" class="link-dark">TechnoPark</a>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col popular-tag">
+              <a href="#" class="link-danger fw-bold">MySQL</a>
+            </div>
+            <div class="col popular-tag">
+              <a href="#" class="link-success fw-bold">django</a>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col popular-tag">
+              <a href="#" class="link-dark">Mail.Ru</a>
+            </div>
+            <div class="col popular-tag">
+              <a href="#" class="link-dark">Voloshin</a>
+            </div>
+            <div class="col popular-tag">
+              <a href="#" class="link-warning">FireFox</a>
+            </div>
+          </div>
+        </div>
+        <div class="best-members">
+          <h2 class="title-best-members">Best Members</h2>
+          <div class="best-member">
+            <a href="#">Mr. Freeman</a>
+          </div>
+          <div class="best-member">
+            <a href="#">Dr. House</a>
+          </div>
+          <div class="best-member">
+            <a href="#">Bender</a>
+          </div>
+          <div class="best-member">
+            <a href="#">Queen Victoria</a>
+          </div>
+          <div class="best-member">
+            <a href="#">V. Pupkin</a>
+          </div>
+        </div>
+      </div>
+     </div>
+  </div>
+</main>
+
+<footer class="footer mt-auto py-3 bg-body-tertiary">
+  <div class="container">
+    <span class="text-body-secondary">Place sticky footer content here.</span>
+  </div>
+</footer>
+
+
+    <script src="/docs/5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe" crossorigin="anonymous"></script>
+
+
+  </body>
+</html>
+

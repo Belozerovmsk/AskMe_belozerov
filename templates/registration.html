@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en" class="h-100">
+    <head>
+      <meta charset="utf-8">
+
+      <title>Sticky Footer Navbar Template · Bootstrap v5.3</title>
+      <link href="../static/css/bootstrap.css" rel="stylesheet" crossorigin="anonymous">
+
+      <!— Custom styles for this template —>
+      <link href="../static/css/my.css" rel="stylesheet">
+    </head>
+    <body class="d-flex flex-column h-100">
+
+      <header>
+        <!— Fixed navbar —>
+        <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+          <div class="container-fluid">
+            <a class="navbar-brand fs-3" href="index.html">Ask me!</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+              <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarCollapse">
+              <form class="d-flex mx-left col-8" role="search">
+                <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+                <button class="btn btn-outline-success" type="submit">ASK</button>
+              </form>
+            </div>
+            <div>
+              <div class="row">
+                  <div class="col settings-column">
+                      <a class="navbar-brand fs-6" href="#">log in</a>
+                      <a class="navbar-brand fs-6" href="#">register</a>
+                    </div>
+              </div>
+            </div>
+          </div>
+        </nav>
+      </header>
+
+<!-- Begin page content -->
+<main class="flex-shrink-0">
+  <div class="container">
+
+    <div class="row">
+      <div class="col-9">
+        <div class="mt-5">
+          <h2 class="py-3 mb-3 border-bottom">Registration</h2>
+
+          <p class="text-danger">Sorry, this email address already registered!</p>
+          <form class="col-sm-6">
+            <div class="mb-3">
+              <label for="inputLogin" class="form-label">Login</label>
+              <input type="text" class="form-control" id="inputLogin" placeholder="User">
+            </div>
+            <div class="mb-3">
+              <label for="exampleInputEmail1" class="form-label">Email</label>
+              <input type="email" class="form-control" id="exampleInputEmail1" placeholder="user@mail.ru">
+            </div>
+            <div class="mb-3">
+              <label for="exampleInputPassword1" class="form-label">Password</label>
+              <input type="password" class="form-control" id="exampleInputPassword1">
+            </div>
+            <div class="mb-3">
+              <label for="exampleInputPassword2" class="form-label">Repeat password</label>
+              <input type="password" class="form-control" id="exampleInputPassword2">
+            </div>
+            <div class="mb-3">
+              <label for="inputNickName" class="col-sm-3 col-form-label">Upload Avatar</label>
+              <input type="file" class="custom-file-input" id="validatedCustomFile" required>
+              <div class="invalid-feedback">Example invalid custom file feedback</div>
+            </div>
+            <button type="submit" class="btn btn-dark">Register</button>
+          </form>
+      </div>
+      </div>
+
+      <div class="col-3 right-col">
+        <div class="popular-tags">
+          <h2 class="title-popular-tags">Popular Tags</h2>
+          <div class="row">
+            <div class="col popular-tag">
+              <a href="#" class="link-dark">perl</a>
+            </div>
+            <div class="col popular-tag">
+              <a href="#" class="link-danger fw-bold">python</a>
+            </div>
+            <div class="col popular-tag">
+              <a href="#" class="link-dark">TechnoPark</a>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col popular-tag">
+              <a href="#" class="link-danger fw-bold">MySQL</a>
+            </div>
+            <div class="col popular-tag">
+              <a href="#" class="link-success fw-bold">django</a>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col popular-tag">
+              <a href="#" class="link-dark">Mail.Ru</a>
+            </div>
+            <div class="col popular-tag">
+              <a href="#" class="link-dark">Voloshin</a>
+            </div>
+            <div class="col popular-tag">
+              <a href="#" class="link-warning">FireFox</a>
+            </div>
+          </div>
+        </div>
+        <div class="best-members">
+          <h2 class="title-best-members">Best Members</h2>
+          <div class="best-member">
+            <a href="#">Mr. Freeman</a>
+          </div>
+          <div class="best-member">
+            <a href="#">Dr. House</a>
+          </div>
+          <div class="best-member">
+            <a href="#">Bender</a>
+          </div>
+          <div class="best-member">
+            <a href="#">Queen Victoria</a>
+          </div>
+          <div class="best-member">
+            <a href="#">V. Pupkin</a>
+          </div>
+        </div>
+      </div>
+     </div>
+  </div>
+</main>
+
+<footer class="footer mt-auto py-3 bg-body-tertiary">
+  <div class="container">
+    <span class="text-body-secondary">Place sticky footer content here.</span>
+  </div>
+</footer>
+
+
+    <script src="/docs/5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe" crossorigin="anonymous"></script>
+
+
+  </body>
+</html>
+
