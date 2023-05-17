@@ -1,0 +1,24 @@
+{% extends "inc/base_2.html" %}
+
+{% block content %}
+<div class="mt-5">
+    <h2 class="py-3 mb-3 border-bottom">Login</h2>
+
+    <p class="text-danger">Sorry, this password is not correct!</p>
+    <form class="col-sm-6">
+        <div class="mb-3">
+            <label for="inputLogin" class="form-label">Login</label>
+            <input type="text" class="form-control" id="inputLogin" placeholder="User">
+      </div>
+      <div class="mb-3">
+        <label for="exampleInputPassword1" class="form-label">Password</label>
+        <input type="password" class="form-control" id="exampleInputPassword1" placeholder="*****">
+      </div>
+
+      <button type="submit" class="btn btn-primary">Login</button>
+      <div class="mb-2">
+        <a href="{% url 'register' %}">create new account</a>
+      </div>
+    </form>
+</div>
+{% endblock content %}

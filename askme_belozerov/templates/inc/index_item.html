@@ -1,0 +1,38 @@
+{% load static %}
+
+<div class="question">
+    <div class="row">
+      <div class="col-3">
+        <div class="question-avatar">
+          <img src="{% static "img/avatar1.jpg" %}" alt="avatar">
+        </div>
+      </div>
+      <div class="col-6">
+        <h2><a href="{% url "question" question.id %}">{{ question.title }}</a></h2>
+        <div class="question-text">{{ question.text }}</div>
+       <div class="row">
+         <div class="col-4">
+           <a href="{% url "question" question.id %}">Answers (3)</a>
+         </div>
+         <div class="col-8">
+           Tags:
+            {% for tag in tags %}
+                <a href="{% url "tag" tag.name %}">{{ tag.name }}</a>
+            {% endfor %}
+
+         </div>
+       </div>
+      </div>
+      <div class="col-2">
+        <div class="input-group">
+          <span class="input-group-btn">
+            <button class="btn btn-default" type="button" id="minus-btn-1">-</button>
+          </span>
+          <input type="text" class="form-control" id="number-input-1" value="0">
+          <span class="input-group-btn">
+            <button class="btn btn-default" type="button" id="plus-btn-1">+</button>
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>

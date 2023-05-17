@@ -1,0 +1,20 @@
+<div class="col-md-4 mt-3">
+  <!-- Display pagination links -->
+  {% if questions.has_other_pages %}
+    <ul class="pagination">
+      {% if questions.has_previous %}
+        <li class="page-item"><a class="page-link" href="?page={{ questions.previous_page_number }}">Previous</a></li>
+      {% endif %}
+      {% for i in questions.paginator.page_range %}
+        {% if questions.number == i %}
+          <li class="page-item active"><a class="page-link" href="#">{{ i }} <span class="sr-only">(current)</span></a></li>
+        {% else %}
+          <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+        {% endif %}
+      {% endfor %}
+      {% if questions.has_next %}
+        <li class="page-item"><a class="page-link" href="?page={{ questions.next_page_number }}">Next</a></li>
+      {% endif %}
+    </ul>
+  {% endif %}
+</div>

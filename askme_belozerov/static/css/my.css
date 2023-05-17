@@ -1,0 +1,81 @@
+main > .container {
+  padding: 60px 15px 0;
+}
+
+.question {
+  height: 200px;
+  border: 2px solid black;
+  border-radius: 4px;
+  padding: 10px;
+  margin-bottom: 5px;
+}
+
+.question-avatar > img {
+  height: 150px;
+  width: auto;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.title-popular-tags {
+  margin-top: 70px;
+}
+
+.popular-tag, .best-member, .question-text {
+  margin-bottom: 5%;
+}
+
+.title-best-members, .correct-check {
+  margin-top: 10%;
+}
+
+.col-9, .mt-5  {
+  margin-bottom: 20px;
+}
+
+.new-questions-title {
+  margin-top: 20px;
+  margin-bottom: 15px;
+}
+
+.main-header-position {
+  display: flex;
+  align-items: flex-end;
+  margin-top: 5%;
+}
+
+.settings-avatar > img {
+  height: 70px;
+  width: auto;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.settings-avatar img {
+  display: block;
+  margin-left: auto;
+}
+
+.settings-column {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.stranger-answer-avatar > img {
+  height: 130px;
+  width: auto;
+  object-fit: cover;
+  border-radius: 50%;
+  margin-left: 30px;
+  margin-top: 15px;
+}
+
+.create-new-account-a {
+  margin-top: 15px;
+}
+
+
+
+
+

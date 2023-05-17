@@ -1,0 +1,17 @@
+{% extends "inc/base_1.html" %}
+
+{% block content %}
+<div class="col-9">
+
+  <div class="row new-questions-title">
+    <div class="col main-header-position">
+      <h3><a href="{% url "hot" %}">Hot Questions</a></h3>
+    </div>
+  </div>
+      {% for question in questions %}
+        {% include "inc/index_item.html" %}
+      {% endfor %}
+    {% include "inc/pagination.html" with object_paginator=questions%}
+</div>
+
+{% endblock content %}

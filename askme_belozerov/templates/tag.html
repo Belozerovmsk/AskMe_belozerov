@@ -1,0 +1,19 @@
+{% extends "inc/base_1.html" %}
+
+{% block content%}
+
+<div class="col-9">
+
+  <div class="row new-questions-title">
+    <div class="col-5 main-header-position">
+      <h2 style="display: inline-block">Tags: {{ tag.name }}</h2>
+<!--      <h1>Tag: bender</h1>-->
+    </div>
+  </div>
+
+  {% for tag in tags %}
+    {% include "inc/tag_item.html"%}
+  {% endfor %}
+  {% include "inc/pagination.html" %}
+</div>
+{% endblock content%}

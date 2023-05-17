@@ -1,0 +1,48 @@
+{% extends "inc/base_2.html" %}
+{% load static %}
+
+{% block content %}
+<div class="col-9">
+  <div style="border-top: 1px solid black; margin-top: 20px;"></div>
+    <div class="row new-questions-title">
+    <div class="col-3">
+        <div class="question-avatar">
+          <img src="{% static "img/avatar1.jpg" %}" alt="avatar">
+        </div>
+      </div>
+      <div class="col-6">
+        <h2> {{question.title}} </h2>
+        <div class="question-text">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Iaculis urna id volutpat lacus laoreet non curabitur...</div>
+       <div class="row">
+         <div class="col-8">
+             Tags: {% for tag in question.tags %}
+           <a href="{% url "tag" tag.name %}">{{ tag.name }}</a>
+           {% if not forloop.last %}, {% endif %}{% endfor %}
+         </div>
+       </div>
+      </div>
+      <div class="col-2">
+        <div class="input-group">
+          <span class="input-group-btn">
+            <button class="btn btn-default" type="button" id="minus-btn-1">-</button>
+          </span>
+          <input type="text" class="form-control" id="number-input-1" value="0">
+          <span class="input-group-btn">
+            <button class="btn btn-default" type="button" id="plus-btn-1">+</button>
+          </span>
+        </div>
+      </div>
+  </div>
+  <div style="border-top: 1px solid black; margin-top: 20px; margin-bottom: 20px"></div>
+
+  {% for answer in answers %}
+    {% include "inc/answer_item.html" %}
+  {% endfor %}
+
+  <div style="border-top: 1px solid black; margin-bottom: 20px; margin-top: 20px "></div>
+  <div class="NewAnswer row">
+    <textarea class="form-control" id="NewQuestionText" rows="6" placeholder="Enter your answer here.."></textarea>
+    <div class="NewAnswer mt-3 mb-3"><button class="btn btn-dark" type="submit">Answer</button></div>
+  </div>
+</div>
+{% endblock content %}
