@@ -12,14 +12,10 @@
         <div class="question-text">{{ question.text }}</div>
        <div class="row">
          <div class="col-4">
-           <a href="{% url "question" question.id %}">Answers (3)</a>
+           <a href="{% url "question" question.id %}">Answers ({{ question.num_answers }})</a>
          </div>
          <div class="col-8">
-           Tags:
-            {% for tag in tags %}
-                <a href="{% url "tag" tag.name %}">{{ tag.name }}</a>
-            {% endfor %}
-
+            Tags: {% for tag in question.tag.all %}<a href="{% url "tag" tag.name %}">{{ tag.name }}</a>{% if not forloop.last %}, {% endif %}{% endfor %}
          </div>
        </div>
       </div>

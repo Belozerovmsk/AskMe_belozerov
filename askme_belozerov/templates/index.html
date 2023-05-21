@@ -17,7 +17,7 @@
     {% include "inc/index_item.html" %}
   {% endfor %}
 
-  {% include "inc/pagination.html" with questions=questions %}
+  {% include "inc/pagination.html" with object_paginator=questions %}
 </div>
 
 {% endblock content%}

@@ -24,7 +24,9 @@
             <div class="collapse navbar-collapse" id="navbarCollapse">
               <form class="d-flex mx-left col-8" role="search">
                 <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-                <button class="btn btn-outline-success" type="submit">ASK</button>
+                <form method="get">
+                  <button class="btn btn-outline-success" type="submit" formaction="{% url 'ask' %}">ASK</button>
+                </form>
               </form>
             </div>
             <div>
@@ -52,54 +54,21 @@
       <div class="col-3 right-col">
         <div class="popular-tags">
           <h2 class="title-popular-tags">Popular Tags</h2>
-          <div class="row">
-            <div class="col popular-tag">
-              <a href="#" class="link-dark">perl</a>
-            </div>
-            <div class="col popular-tag">
-              <a href="#" class="link-danger fw-bold">python</a>
-            </div>
-            <div class="col popular-tag">
-              <a href="#" class="link-dark">TechnoPark</a>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col popular-tag">
-              <a href="#" class="link-danger fw-bold">MySQL</a>
-            </div>
-            <div class="col popular-tag">
-              <a href="#" class="link-success fw-bold">django</a>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col popular-tag">
-              <a href="#" class="link-dark">Mail.Ru</a>
-            </div>
-            <div class="col popular-tag">
-              <a href="#" class="link-dark">Voloshin</a>
-            </div>
-            <div class="col popular-tag">
-              <a href="#" class="link-warning">FireFox</a>
-            </div>
+            <div class="row">
+            {% for tag in tags|slice:":10" %}
+              <div class="col popular-tag">
+                <a href="{% url "tag" tag.name %}">{{ tag.name }}</a>
+              </div>
+            {% endfor %}
           </div>
         </div>
         <div class="best-members">
           <h2 class="title-best-members">Best Members</h2>
+          {% for members in best_members|slice:":5" %}
           <div class="best-member">
-            <a href="#">Mr. Freeman</a>
+            <a href="#"> {{ members.name }}</a>
           </div>
-          <div class="best-member">
-            <a href="#">Dr. House</a>
-          </div>
-          <div class="best-member">
-            <a href="#">Bender</a>
-          </div>
-          <div class="best-member">
-            <a href="#">Queen Victoria</a>
-          </div>
-          <div class="best-member">
-            <a href="#">V. Pupkin</a>
-          </div>
+          {% endfor %}
         </div>
       </div>
      </div>

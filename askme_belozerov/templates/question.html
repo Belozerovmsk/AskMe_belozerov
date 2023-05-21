@@ -12,13 +12,8 @@
       </div>
       <div class="col-6">
         <h2> {{question.title}} </h2>
-        <div class="question-text">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Iaculis urna id volutpat lacus laoreet non curabitur...</div>
+        <div class="question-text">{{ question.text }}</div>
        <div class="row">
-         <div class="col-8">
-             Tags: {% for tag in question.tags %}
-           <a href="{% url "tag" tag.name %}">{{ tag.name }}</a>
-           {% if not forloop.last %}, {% endif %}{% endfor %}
-         </div>
        </div>
       </div>
       <div class="col-2">
@@ -34,8 +29,7 @@
       </div>
   </div>
   <div style="border-top: 1px solid black; margin-top: 20px; margin-bottom: 20px"></div>
-
-  {% for answer in answers %}
+  {% for answer in questions|slice:":3" %}
     {% include "inc/answer_item.html" %}
   {% endfor %}
 

@@ -8,16 +8,14 @@
         </div>
       </div>
       <div class="col-6">
-        <h2><a href="#">{{ tag.title }}</a></h2>
-        <div class="question-text">{{ tag.text }}</div>
+        <h2><a href="#">{{ question.title }}</a></h2>
+        <div class="question-text">{{ question.text }}</div>
        <div class="row">
          <div class="col-4">
-           Answers (3)
+           <a href="{% url "question" question.id %}">Answers</a>
          </div>
          <div class="col-8">
-           Tags:
-           <a href="#">black_jack</a>,
-           <a href="#">black_jack</a>
+           Tag: {% for tag in question.tag.all %}<a href="{% url "tag" tag.name %}">{{ tag.name }}</a>{% if not forloop.last %}, {% endif %}{% endfor %}
          </div>
        </div>
       </div>

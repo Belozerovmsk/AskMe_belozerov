@@ -7,13 +7,12 @@
   <div class="row new-questions-title">
     <div class="col-5 main-header-position">
       <h2 style="display: inline-block">Tags: {{ tag.name }}</h2>
-<!--      <h1>Tag: bender</h1>-->
     </div>
   </div>
 
-  {% for tag in tags %}
-    {% include "inc/tag_item.html"%}
+  {% for question in questions %}
+    {% include "inc/tag_item.html" %}
   {% endfor %}
-  {% include "inc/pagination.html" %}
+  {% include "inc/pagination.html" with object_paginator=questions %}
 </div>
 {% endblock content%}
