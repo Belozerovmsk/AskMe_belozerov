@@ -1,12 +1,5 @@
-
-from django.core.management.base import BaseCommand
-from django.contrib.auth.models import User
-from faker import Faker
 from askme import models
 import uuid
-import random
-
-
 from django.core.management.base import BaseCommand
 from django.contrib.auth.models import User
 from faker import Faker
