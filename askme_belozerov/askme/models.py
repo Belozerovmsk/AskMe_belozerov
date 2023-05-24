@@ -40,7 +40,7 @@ class UserManager:
 
 class User(models.Model):
     profile = models.OneToOneField(Users, on_delete=models.PROTECT)
-    avatar = models.ImageField(null=True)
+    avatar = models.ImageField(upload_to='avatars/%Y/%m/%d/', default='upload/User.png')
     nickname = models.CharField(max_length=40, unique=False)
     score = models.IntegerField(default=0)
 

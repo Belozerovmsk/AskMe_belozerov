@@ -1,29 +1,16 @@
-from django.core.paginator import Paginator
-from django.shortcuts import render
 from . import models
-from .models import Question, Answer, User, Tag
-from django.http import HttpResponseNotFound, Http404
-from django.urls import reverse
+from .models import Question, Answer
 from . import forms
-from django.contrib import auth
-from django.http import HttpResponse, HttpResponseNotFound, HttpResponseRedirect
-from django.shortcuts import redirect, render
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth import login, logout
-
 from django.urls import reverse
-
 from django.contrib import auth
-from django.contrib.auth import login, logout
+from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
-from django.http import HttpResponse, HttpResponseNotFound
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-
-
-from .models import User as UserProfile
-from django.db.models import Count
-
+from django.http import HttpResponseNotFound
+from django.core.paginator import Paginator
+from django.forms import model_to_dict
+from django.contrib.auth import authenticate
+from django.views.decorators.http import require_http_methods
 
 
 def index(request):
@@ -46,7 +33,6 @@ def hot(request):
                'tags': tags_page,
                'best_members': members_page}
     return render(request, 'hot.html', context)
-
 
 
 def question(request, question_id, page_num=1):
@@ -80,12 +66,23 @@ def question(request, question_id, page_num=1):
 
 
 @login_required
+@require_http_methods(['GET', 'POST'])
 def settings(request):
+    if request.method == 'GET':
+        dict_model_fields = model_to_dict(request.user)
+        user_form = forms.SettingsForm(initial=dict_model_fields)
+    elif request.method == 'POST':
+        user_form = forms.SettingsForm(data=request.POST, files = request.FILES, instance = request.user)
+        if user_form.is_valid():
+            user_form.save()
+            return redirect(reverse("settings"))
     tags_page = models.TagManager.mostPopular()
     members_page = models.TagManager.mostPopular()
     context = {'tags': tags_page,
-               'best_members': members_page}
-    return render(request, 'settings.html', context)
+               'best_members': members_page,
+               'form': user_form}
+    return render(request, "settings.html", context=context)
+
 
 def registration(request):
     if request.method == 'GET':
@@ -98,7 +95,6 @@ def registration(request):
                 return redirect('index')
             else:
                 user_form.add_error(field=None, error="User saving error!")
-
     tags_page = models.TagManager.mostPopular()
     members_page = models.TagManager.mostPopular()
 
@@ -114,7 +110,10 @@ def login(request):
     elif request.method == 'POST':
         login_form = forms.LoginForm(request.POST)
         if login_form.is_valid():
-            user = auth.authenticate(request=request, **login_form.cleaned_data)
+            nickname = request.POST['nickname']
+            password = request.POST['password']
+            user = authenticate(nickname=nickname, password=password)
+            print(user)
             if user:
                 auth.login(request, user)
                 return redirect('index')
@@ -143,7 +142,6 @@ def ask(request):
                'best_members': members_page,
                'form': question_form}
     return render(request, "ask.html", context)
-
 
 
 def tag(request, tag_name):

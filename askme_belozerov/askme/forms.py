@@ -3,6 +3,7 @@ from .models import User, Question, Tag, Answer
 from django.contrib.auth.models import User as U
 from django.core.exceptions import ValidationError
 
+
 class LoginForm(forms.Form):
     nickname = forms.CharField(max_length = 30)
     password = forms.CharField(max_length = 100, widget = forms.PasswordInput)
@@ -81,3 +82,25 @@ class AnswerForm(forms.ModelForm):
         new_answer.question = question
         new_answer.save()
         return new_answer
+
+
+class SettingsForm(forms.ModelForm):
+    avatar = forms.FileField(widget=forms.FileInput(), required=False, label="New avatar")
+    Delete_avatar = forms.BooleanField(required=False)
+
+    class Meta:
+        model = U
+        fields = ['username', 'email', 'first_name', 'last_name', 'avatar']
+
+    def save(self):
+        user = super().save()
+        print("self.cleaned_data = ", self.cleaned_data)
+        profile = user.profile
+        if self.cleaned_data['avatar']:
+            profile.avatar = self.cleaned_data['avatar']
+        if self.cleaned_data['Delete_avatar']:
+            profile.avatar.delete(save=False)
+            profile.avatar = 'avatars/common_avatar.png'
+        profile.save()
+
+        return user
