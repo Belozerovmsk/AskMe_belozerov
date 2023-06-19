@@ -37,20 +37,18 @@ def hot(request):
 
 @login_required(login_url='/login/')
 def question(request, question_id, page_num=1):
+    question_page = Question.objects.get_id(question_id)
     if request.method == 'GET':
         answer_form = forms.AnswerForm()
-    question_page = Question.objects.get_id(question_id)
-    if request.method == 'POST':
+    else:
         answer_form = forms.AnswerForm(request.POST)
         if answer_form.is_valid():
             answer = answer_form.save(request, question_id)
             answers = paginate(Answer.objects.mostPopular(question_page), request)
             page_num = answers.paginator.num_pages
             return redirect(reverse('question_page', args=(question_id, page_num)) + f'?page={page_num}#{answer.id}')
-
         else:
-            answer_form.add_error("Invalid parameters")
-
+            answer_form.add_error("Invalid arguments")
     tags_page = models.TagManager.mostPopular()
     answers = paginate(Answer.objects.mostPopular(question_page), request)
     best_members = models.Profile.objects.mostPopular()

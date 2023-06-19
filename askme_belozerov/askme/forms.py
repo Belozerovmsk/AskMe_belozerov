@@ -1,12 +1,5 @@
-# from django import forms
-# from .models import User, Question, Tag, Answer
-from django.contrib.auth.models import User
-# from django.core.exceptions import ValidationError
-
 
 from django import forms
-from django.forms.utils import ErrorList
-from django.contrib.auth.models import User
 from askme import models
 from django.contrib import messages
 
@@ -14,6 +7,74 @@ from django.contrib import messages
 class LoginForm(forms.Form):
     username = forms.CharField()
     password = forms.CharField(widget=forms.PasswordInput)
+
+
+class RegistrationForm(forms.Form):
+    username = forms.CharField(required=True, min_length=4)
+    email = forms.EmailField(required=False, widget=forms.EmailInput)
+    full_name = forms.CharField(required=False)
+    password = forms.CharField(required=True, widget=forms.PasswordInput)
+    password_check = forms.CharField(required=True, widget=forms.PasswordInput)
+    avatar = forms.ImageField(required=False, widget=forms.FileInput)
+
+    def clean_email(self):
+        email = self.cleaned_data.get('email')
+
+        if email and models.User.objects.filter(email=email).exists():
+            raise forms.ValidationError('Email already registered!')
+
+        return email
+
+    def clean_username(self):
+        username = self.cleaned_data.get('username')
+
+        if models.User.objects.filter(username=username).exists():
+            raise forms.ValidationError('This username already exists!')
+
+        return username
+
+    def clean_full_name(self):
+        full_name = self.cleaned_data.get('full_name')
+
+        if full_name and len(full_name.split()) < 2:
+            raise forms.ValidationError('Full name must contain at least 2 words')
+
+        return full_name
+
+    def clean(self):
+        cleaned_data = super().clean()
+        password = cleaned_data.get('password')
+        password_check = cleaned_data.get('password_check')
+
+        if password != password_check:
+            raise forms.ValidationError('Password does not match!')
+
+        return cleaned_data
+
+    def save(self, request):
+        user = models.User.objects.create_user(username=self.cleaned_data.get('username'))
+        user.set_password(self.cleaned_data.get('password'))
+        user.save()
+        profile = models.Profile.objects.create(profile=user)
+
+        email = self.cleaned_data.get('email')
+        full_name = self.cleaned_data.get('full_name')
+        avatar = self.cleaned_data.get('avatar')
+
+        if email:
+            user.email = email
+
+        if full_name:
+            spliting_full_name = full_name.split()
+            user.first_name = spliting_full_name[0]
+            user.last_name = spliting_full_name[1::]
+
+        if avatar:
+            profile.avatar.save(avatar.name, avatar)
+
+        user.save()
+        profile.save()
+        messages.success(request, 'Thanks for registration')
 
 
 class SettingForm(forms.Form):
@@ -27,7 +88,6 @@ class SettingForm(forms.Form):
 
     def clean_username(self):
         username = self.cleaned_data.get('username')
-
         if username and models.User.objects.filter(username=username).exists():
             self.add_error('username', 'This username is already taken.')
 
@@ -41,11 +101,9 @@ class SettingForm(forms.Form):
         password_check = cleaned_data.get('password_check')
 
         if new_password and new_password != new_password_check:
-            self.add_error('new_password', '')
             self.add_error('new_password_check', "New password fields don't match.")
 
         if password and password != password_check:
-            self.add_error('password', '')
             self.add_error('password_check', "Password fields don't match.")
 
         return cleaned_data
@@ -74,6 +132,7 @@ class SettingForm(forms.Form):
         user.save()
         profile.save()
         messages.success(request, 'Profile updated successfully!')
+
 
 class AnswerForm(forms.Form):
     answer = forms.CharField(required=True, max_length=500,
