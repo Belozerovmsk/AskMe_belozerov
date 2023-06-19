@@ -69,19 +69,27 @@ def question(request, question_id, page_num=1):
 @login_required
 @require_http_methods(['GET', 'POST'])
 def settings(request):
+    if request.user.is_authenticated:
+        user = models.User.objects.get(username=request.user)
+        account = models.Profile.objects.get(profile=user)
+    else:
+        account = None
     if request.method == 'GET':
-        dict_model_fields = model_to_dict(request.user)
-        user_form = forms.SettingsForm(initial=dict_model_fields)
+        setting_form = forms.SettingForm()
     elif request.method == 'POST':
-        user_form = forms.SettingsForm(data=request.POST, files = request.FILES, instance = request.user)
-        if user_form.is_valid():
-            user_form.save(request)
-            return redirect(reverse("settings"))
+        setting_form = forms.SettingForm(request.POST, files=request.FILES)
+        if setting_form.is_valid():
+            password = setting_form.cleaned_data.get('password')
+            if not account.profile.check_password(password):
+                setting_form.add_error(None, 'Current password are not equal')
+            else:
+                setting_form.save(request)
+                return redirect(reverse('settings'))
     tags_page = models.TagManager.mostPopular()
     members_page = models.Profile.objects.mostPopular()
     context = {'tags': tags_page,
                'best_members': members_page,
-               'form': user_form}
+               'form': setting_form}
     return render(request, "settings.html", context=context)
 
 

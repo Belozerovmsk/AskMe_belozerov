@@ -74,73 +74,64 @@ class SettingsForm(forms.Form):
         messages.success(request, 'Profile updated successfully!')
 
 
-class RegistrationForm(forms.Form):
-    username = forms.CharField(required=True, min_length=4)
+class SettingForm(forms.Form):
+    username = forms.CharField(required=False)
     email = forms.EmailField(required=False, widget=forms.EmailInput)
-    full_name = forms.CharField(required=False)
-    password = forms.CharField(required=True, widget=forms.PasswordInput)
-    password_check = forms.CharField(required=True, widget=forms.PasswordInput)
+    password = forms.CharField(required=True, min_length=8, widget=forms.PasswordInput)
+    password_check = forms.CharField(required=True, min_length=8, widget=forms.PasswordInput)
+    new_password = forms.CharField(required=False, min_length=8, widget=forms.PasswordInput)
+    new_password_check = forms.CharField(required=False, min_length=8, widget=forms.PasswordInput)
     avatar = forms.ImageField(required=False, widget=forms.FileInput)
 
     def clean_username(self):
         username = self.cleaned_data.get('username')
 
-        if models.User.objects.filter(username=username).exists():
-            self.add_error('username', 'This username already exists!')
+        if username and models.User.objects.filter(username=username).exists():
+            self.add_error('username', 'This username is already taken.')
 
         return username
 
-    def clean_email(self):
-        email = self.cleaned_data.get('email')
-
-        if email and models.User.objects.filter(email=email).exists():
-            self.add_error('email', 'Email already registred!')
-
-        return email
-
-    def clean_full_name(self):
-        full_name = self.cleaned_data.get('full_name')
-
-        if full_name and len(full_name.split()) == 1:
-            self.add_error('full_name', 'Full name must contain 2 words at least')
-
-        return full_name
-
     def clean(self):
         cleaned_data = super().clean()
+        new_password = cleaned_data.get('new_password')
+        new_password_check = cleaned_data.get('new_password_check')
         password = cleaned_data.get('password')
         password_check = cleaned_data.get('password_check')
 
-        if password != password_check:
+        if new_password and new_password != new_password_check:
+            self.add_error('new_password', '')
+            self.add_error('new_password_check', "New password fields don't match.")
+
+        if password and password != password_check:
             self.add_error('password', '')
-            self.add_error('password_check', 'Password does not equal!')
+            self.add_error('password_check', "Password fields don't match.")
 
         return cleaned_data
 
     def save(self, request):
-        user = models.User.objects.create_user(username=self.cleaned_data.get('username'))
-        user.set_password(self.cleaned_data.get('password'))
-        user.save()
-        profile = models.Profile.objects.create(profile=user)
-
+        user = models.User.objects.get(username=request.user)
+        profile = models.Profile.objects.get(profile=user)
+        username = self.cleaned_data.get('username')
         email = self.cleaned_data.get('email')
-        full_name = self.cleaned_data.get('full_name')
+        new_password = self.cleaned_data.get('new_password')
         avatar = self.cleaned_data.get('avatar')
+
+        if new_password:
+            user.set_password(new_password)
+
+        if username:
+            profile.username = username
+            user.username = username
 
         if email:
             user.email = email
 
-        if full_name:
-            spliting_full_name = full_name.split()
-            user.first_name = spliting_full_name[0]
-            user.last_name = spliting_full_name[1::]
-
         if avatar:
-            profile.avatar.save(avatar.name, avatar)
+            profile.avatar = avatar
 
         user.save()
         profile.save()
-        messages.success(request, 'Thanks for registration')
+        messages.success(request, 'Profile updated successfully!')
 
 
 class AnswerForm(forms.Form):
