@@ -10,68 +10,10 @@ from django.contrib.auth.models import User
 from askme import models
 from django.contrib import messages
 
+
 class LoginForm(forms.Form):
     username = forms.CharField()
     password = forms.CharField(widget=forms.PasswordInput)
-
-class SettingsForm(forms.Form):
-    username = forms.CharField(required=False)
-    email = forms.EmailField(required=False, widget=forms.EmailInput)
-    password = forms.CharField(required=True, min_length=8, widget=forms.PasswordInput)
-    password_check = forms.CharField(required=True, min_length=8, widget=forms.PasswordInput)
-    new_password = forms.CharField(required=False, min_length=8, widget=forms.PasswordInput)
-    new_password_check = forms.CharField(required=False, min_length=8, widget=forms.PasswordInput)
-    avatar = forms.ImageField(required=False, widget=forms.FileInput)
-
-    def clean_username(self):
-        username = self.cleaned_data.get('username')
-
-        if username and models.User.objects.filter(username=username).exists():
-            self.add_error('username', 'This username is already taken.')
-
-        return username
-
-    def clean(self):
-        cleaned_data = super().clean()
-        new_password = cleaned_data.get('new_password')
-        new_password_check = cleaned_data.get('new_password_check')
-        password = cleaned_data.get('password')
-        password_check = cleaned_data.get('password_check')
-
-        if new_password and new_password != new_password_check:
-            self.add_error('new_password', '')
-            self.add_error('new_password_check', "New password fields don't match.")
-
-        if password and password != password_check:
-            self.add_error('password', '')
-            self.add_error('password_check', "Password fields don't match.")
-
-        return cleaned_data
-
-    def save(self, request):
-        user = models.User.objects.get(username=request.user)
-        profile = models.Profile.objects.get(profile=user)
-        username = self.cleaned_data.get('username')
-        email = self.cleaned_data.get('email')
-        new_password = self.cleaned_data.get('new_password')
-        avatar = self.cleaned_data.get('avatar')
-
-        if new_password:
-            user.set_password(new_password)
-
-        if username:
-            profile.username = username
-            user.username = username
-
-        if email:
-            user.email = email
-
-        if avatar:
-            profile.avatar = avatar
-
-        user.save()
-        profile.save()
-        messages.success(request, 'Profile updated successfully!')
 
 
 class SettingForm(forms.Form):
@@ -132,7 +74,6 @@ class SettingForm(forms.Form):
         user.save()
         profile.save()
         messages.success(request, 'Profile updated successfully!')
-
 
 class AnswerForm(forms.Form):
     answer = forms.CharField(required=True, max_length=500,
