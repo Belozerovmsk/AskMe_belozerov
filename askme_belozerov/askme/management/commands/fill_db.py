@@ -6,8 +6,6 @@ from faker import Faker
 import random
 
 class Command(BaseCommand):
-    help = 'BD FILL'
-
     def add_arguments(self, parser):
         parser.add_argument('ratio', type=int, help='bd filling coefficient')
 
@@ -16,12 +14,13 @@ class Command(BaseCommand):
 
         fake = Faker()
 
-        users = [User(username=f'{fake.word()}{i}_{uuid.uuid4().hex[:8]}', password='password') for i in range(ratio)]
-        User.objects.bulk_create(users)
-        self.stdout.write("USERS FILLED\n")
-
-        profiles = [models.User(profile=user, nickname=fake.user_name()) for user in users]
-        models.User.objects.bulk_create(profiles)
+        profiles = []
+        for i in range(1, ratio + 1):
+            user = User.objects.create(username=f'user{i}')
+            user.set_password(f'django{i}')
+            profile = models.Profile(profile=user)
+            profiles.append(profile)
+        models.Profile.objects.bulk_create(profiles)
         self.stdout.write("PROFILES FILLED\n")
 
         tags = [models.Tag(name=fake.word()) for i in range(ratio)]
@@ -29,32 +28,43 @@ class Command(BaseCommand):
         self.stdout.write("TAGS FILLED\n")
 
         questions = []
-        for i in range(ratio):
-            for j in range(10):
-                question = models.Question(title=fake.sentence(), text=fake.text(), author=random.choice(profiles), score=i)
-                questions.append(question)
+        for i in range(ratio * 10):
+            question = models.Question(name=fake.sentence(), text=fake.text(), user_profile=random.choice(profiles))
+            questions.append(question)
         models.Question.objects.bulk_create(questions)
 
         for question in questions:
-            question.tag.add(random.choice(tags))
+            question.tags.add(random.choice(tags))
         self.stdout.write("QUESTIONS FILLED\n")
 
         answers = []
         for i in range(ratio * 100):
-            answer = models.Answer(text=fake.text(), question=random.choice(questions), author=random.choice(profiles), is_correct=random.choice([True, False]), score=i)
+            answer = models.Answer(text=fake.text(), question=random.choice(questions), user_profile=random.choice(profiles),
+                                   is_correct=random.choice([True, False]))
             answers.append(answer)
         models.Answer.objects.bulk_create(answers)
         self.stdout.write("ANSWERS FILLED\n")
 
-        ratings = []
-        for i in range(ratio * 200):
-            rating = models.Ratings(title=fake.text(), user=random.choice(profiles), positive=random.choice([True, False]))
-            if random.choice([True, False]):
-                rating.question = random.choice(questions)
-            else:
-                rating.answer = random.choice(answers)
-            ratings.append(rating)
-        models.Ratings.objects.bulk_create(ratings)
-        self.stdout.write("RATINGS FILLED\n")
+        like_questions = []
+        for profile in profiles:
+            for question in questions:
+                if len(like_questions) >= ratio * 100:
+                    break
+                like_questions.append(models.LikedQuestions(user_profile=profile, question=question))
+
+        models.LikedQuestions.objects.bulk_create(like_questions)
+
+        self.stdout.write("QUESTIONS LIKES FILLED\n")
+
+        like_answers = []
+        for profile in profiles:
+            for answer in answers:
+                if len(like_answers) >= ratio * 100:
+                    break
+                like_answers.append(models.LikedAnswers(user_profile=profile, answer=answer))
+
+        models.LikedAnswers.objects.bulk_create(like_answers)
+
+        self.stdout.write("ANSWER LIKES FILLED\n")
 
         self.stdout.write("DONE")

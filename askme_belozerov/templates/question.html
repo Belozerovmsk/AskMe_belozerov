@@ -1,4 +1,4 @@
-{% extends "inc/base_2.html" %}
+{% extends "inc/base_1.html" %}
 {% load static %}
 {% load bootstrap5 %}
 
@@ -19,10 +19,9 @@
                 </div>
                 <div class="col-6">
                     Tags:
-                    {% for tag in question.tag.all %}
-                        <a href="{% url "tag" tag.name %}">{{ tag.name }}</a>
-                        {% if not forloop.last %}, {% endif %}
-                    {% endfor %}
+                   {% for tag in question.tags.all %}
+                      <a class="text-decoration-none me-1" href="{% url 'tag' tag.name %}">{{ tag.name }}</a>
+                   {% endfor %}
                 </div>
             </div>
         </div>

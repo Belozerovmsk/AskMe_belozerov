@@ -22,8 +22,6 @@ from . import settings
 
 urlpatterns = [
     path('', views.index, name="index"),
-    path('registration/', views.registration, name="register"),
-    path('login/', views.login, name="login"),
     path('question/<int:question_id>/', views.question, name="question"),
     path('question/<int:question_id>/page/<int:page_num>', views.question, name='question_page'),
     path('ask/', views.ask, name="ask"),
@@ -31,6 +29,8 @@ urlpatterns = [
     path('settings/', views.settings, name="settings"),
     path('admin/', admin.site.urls),
     path('hot/', views.hot, name="hot"),
+    path('registration/', views.registration, name="register"),
+    path('login/', views.login, name="login"),
     path('logout/', views.log_out, name="logout"),
 ]
 

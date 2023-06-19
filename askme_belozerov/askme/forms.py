@@ -1,106 +1,197 @@
-from django import forms
-from .models import User, Question, Tag, Answer
-from django.contrib.auth.models import User as U
-from django.core.exceptions import ValidationError
+# from django import forms
+# from .models import User, Question, Tag, Answer
+from django.contrib.auth.models import User
+# from django.core.exceptions import ValidationError
 
+
+from django import forms
+from django.forms.utils import ErrorList
+from django.contrib.auth.models import User
+from askme import models
+from django.contrib import messages
 
 class LoginForm(forms.Form):
-    nickname = forms.CharField(max_length = 30)
-    password = forms.CharField(max_length = 100, widget = forms.PasswordInput)
+    username = forms.CharField()
+    password = forms.CharField(widget=forms.PasswordInput)
+
+class SettingsForm(forms.Form):
+    username = forms.CharField(required=False)
+    email = forms.EmailField(required=False, widget=forms.EmailInput)
+    password = forms.CharField(required=True, min_length=8, widget=forms.PasswordInput)
+    password_check = forms.CharField(required=True, min_length=8, widget=forms.PasswordInput)
+    new_password = forms.CharField(required=False, min_length=8, widget=forms.PasswordInput)
+    new_password_check = forms.CharField(required=False, min_length=8, widget=forms.PasswordInput)
+    avatar = forms.ImageField(required=False, widget=forms.FileInput)
+
+    def clean_username(self):
+        username = self.cleaned_data.get('username')
+
+        if username and models.User.objects.filter(username=username).exists():
+            self.add_error('username', 'This username is already taken.')
+
+        return username
+
+    def clean(self):
+        cleaned_data = super().clean()
+        new_password = cleaned_data.get('new_password')
+        new_password_check = cleaned_data.get('new_password_check')
+        password = cleaned_data.get('password')
+        password_check = cleaned_data.get('password_check')
+
+        if new_password and new_password != new_password_check:
+            self.add_error('new_password', '')
+            self.add_error('new_password_check', "New password fields don't match.")
+
+        if password and password != password_check:
+            self.add_error('password', '')
+            self.add_error('password_check', "Password fields don't match.")
+
+        return cleaned_data
+
+    def save(self, request):
+        user = models.User.objects.get(username=request.user)
+        profile = models.Profile.objects.get(profile=user)
+        username = self.cleaned_data.get('username')
+        email = self.cleaned_data.get('email')
+        new_password = self.cleaned_data.get('new_password')
+        avatar = self.cleaned_data.get('avatar')
+
+        if new_password:
+            user.set_password(new_password)
+
+        if username:
+            profile.username = username
+            user.username = username
+
+        if email:
+            user.email = email
+
+        if avatar:
+            profile.avatar = avatar
+
+        user.save()
+        profile.save()
+        messages.success(request, 'Profile updated successfully!')
 
 
 class RegistrationForm(forms.Form):
-    username = forms.CharField(max_length=30)
-    name = forms.CharField(max_length=30)
-    password = forms.CharField(widget=forms.PasswordInput)
-    password_check = forms.CharField(widget=forms.PasswordInput)
+    username = forms.CharField(required=True, min_length=4)
+    email = forms.EmailField(required=False, widget=forms.EmailInput)
+    full_name = forms.CharField(required=False)
+    password = forms.CharField(required=True, widget=forms.PasswordInput)
+    password_check = forms.CharField(required=True, widget=forms.PasswordInput)
+    avatar = forms.ImageField(required=False, widget=forms.FileInput)
+
+    def clean_username(self):
+        username = self.cleaned_data.get('username')
+
+        if models.User.objects.filter(username=username).exists():
+            self.add_error('username', 'This username already exists!')
+
+        return username
+
+    def clean_email(self):
+        email = self.cleaned_data.get('email')
+
+        if email and models.User.objects.filter(email=email).exists():
+            self.add_error('email', 'Email already registred!')
+
+        return email
+
+    def clean_full_name(self):
+        full_name = self.cleaned_data.get('full_name')
+
+        if full_name and len(full_name.split()) == 1:
+            self.add_error('full_name', 'Full name must contain 2 words at least')
+
+        return full_name
 
     def clean(self):
         cleaned_data = super().clean()
         password = cleaned_data.get('password')
         password_check = cleaned_data.get('password_check')
-        username = cleaned_data.get('username')
 
         if password != password_check:
-            raise ValidationError("Passwords do not match.")
-
-        if U.objects.filter(username=username).exists():
-            raise ValidationError("Username is already taken.")
+            self.add_error('password', '')
+            self.add_error('password_check', 'Password does not equal!')
 
         return cleaned_data
 
-    def save(self, commit=True):
-        username = self.cleaned_data['username']
-        password = self.cleaned_data['password']
-        name = self.cleaned_data['name']
-        user = U.objects.create_user(username=username, password=password)
-        profile = User.objects.create(profile=user, nickname=name)
-        return profile
+    def save(self, request):
+        user = models.User.objects.create_user(username=self.cleaned_data.get('username'))
+        user.set_password(self.cleaned_data.get('password'))
+        user.save()
+        profile = models.Profile.objects.create(profile=user)
+
+        email = self.cleaned_data.get('email')
+        full_name = self.cleaned_data.get('full_name')
+        avatar = self.cleaned_data.get('avatar')
+
+        if email:
+            user.email = email
+
+        if full_name:
+            spliting_full_name = full_name.split()
+            user.first_name = spliting_full_name[0]
+            user.last_name = spliting_full_name[1::]
+
+        if avatar:
+            profile.avatar.save(avatar.name, avatar)
+
+        user.save()
+        profile.save()
+        messages.success(request, 'Thanks for registration')
+
+
+class AnswerForm(forms.Form):
+    answer = forms.CharField(required=True, max_length=500,
+                             widget=forms.Textarea(attrs={'placeholder': 'Enter an answer...'}))
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['answer'].label = ''
+
+    def save(self, request, question_id):
+        user = models.User.objects.get(username=request.user)
+        profile = models.Profile.objects.get(profile=user)
+        question = models.Question.objects.get(id=question_id)
+        answer = self.cleaned_data['answer']
+
+        answer_obj = models.Answer.objects.create(text=answer, question=question, user_profile=profile)
+        messages.success(request, 'Thanks for your answer!')
+
+        return answer_obj
 
 
 class QuestionForm(forms.ModelForm):
+    title = forms.CharField(max_length=50)
+    text = forms.CharField(max_length=500, widget=forms.Textarea)
     tags = forms.CharField(required=False)
-
-    class Meta:
-        model = Question
-        fields = ['title', 'text', 'tags', 'tag']
+    tag = forms.ModelMultipleChoiceField(queryset=models.Tag.objects.all(), required=False)
 
     def save(self, profile):
         super().clean()
-        tags = self.cleaned_data['tag'] or []
-        tags_names = self.cleaned_data['tags'] or []
-        tags_names.extend([tag.name for tag in tags])
+        tags_names = []
+        if self.cleaned_data['tags']:
+            tags_names.extend(self.cleaned_data['tags'].split(','))
+        if self.cleaned_data['tag']:
+            tags_names.extend([tag.name for tag in self.cleaned_data['tag']])
 
-        tag_objects = []
+        tags = []
         for tag_name in tags_names:
-            tag_name = tag_name.strip()
-            if not tag_name:
-                continue
-            tag, created = Tag.objects.get_or_create(name=tag_name)
-            tag_objects.append(tag)
+            if models.Tag.objects.filter(name=tag_name).exists():
+                tags.append(models.Tag.objects.get(name=tag_name))
+            else:
+                new_tag = models.Tag(name=tag_name)
+                new_tag.save()
+                tags.append(new_tag)
 
-        new_question = Question.objects.create(
-            author=profile,
-            title=self.cleaned_data['title'],
-            text=self.cleaned_data['text']
-        )
-        new_question.tag.set(tag_objects)
+        new_question = models.Question.objects.create(user_profile=profile,
+                                        name=self.cleaned_data['title'],
+                                        text=self.cleaned_data['text'])
+        new_question.tags.set(tags)
         return new_question
 
-
-class AnswerForm(forms.ModelForm):
-    text = forms.CharField(max_length=500, widget=forms.Textarea)
-
     class Meta:
-        model = Answer
-        fields = ["text"]
-
-    def save(self, profile, question):
-        super().clean()
-        new_answer = self.save(commit=False)
-        new_answer.author = profile
-        new_answer.question = question
-        new_answer.save()
-        return new_answer
-
-
-class SettingsForm(forms.ModelForm):
-    avatar = forms.FileField(widget=forms.FileInput(), required=False, label="New avatar")
-    Delete_avatar = forms.BooleanField(required=False)
-
-    class Meta:
-        model = U
-        fields = ['username', 'email', 'first_name', 'last_name', 'avatar']
-
-    def save(self):
-        user = super().save()
-        print("self.cleaned_data = ", self.cleaned_data)
-        profile = user.profile
-        if self.cleaned_data['avatar']:
-            profile.avatar = self.cleaned_data['avatar']
-        if self.cleaned_data['Delete_avatar']:
-            profile.avatar.delete(save=False)
-            profile.avatar = 'avatars/common_avatar.png'
-        profile.save()
-
-        return user
+        model = models.Question
+        fields = ['title', 'text', 'tags', 'tag']

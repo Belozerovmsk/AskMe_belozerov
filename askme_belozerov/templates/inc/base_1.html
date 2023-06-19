@@ -80,10 +80,8 @@
         </div>
         <div class="best-members">
           <h2 class="title-best-members">Best Members</h2>
-          {% for members in best_members|slice:":5" %}
-          <div class="best-member">
-            <a href="#"> {{ members.name }}</a>
-          </div>
+          {% for member in best_members %}
+            <li class="list-group-item" style="font-size: 200%;">{{ member.profile.username }}</li>
           {% endfor %}
         </div>
       </div>

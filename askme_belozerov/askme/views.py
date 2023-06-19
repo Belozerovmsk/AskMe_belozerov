@@ -17,7 +17,7 @@ def index(request):
     questions_page = Question.objects.new_questions()
     questions = paginate(questions_page, request)
     tags_page = models.TagManager.mostPopular()
-    members_page = models.TagManager.mostPopular()
+    members_page = models.Profile.objects.mostPopular()
     context = {'questions': questions,
                'tags': tags_page,
                'best_members': members_page}
@@ -25,34 +25,35 @@ def index(request):
 
 
 def hot(request):
-    questions_page = Question.objects.new_questions()
+    questions_page = Question.objects.hot_questions()
     questions = paginate(questions_page, request)
     tags_page = models.TagManager.mostPopular()
-    members_page = models.TagManager.mostPopular()
+    members_page = models.Profile.objects.mostPopular()
     context = {'questions': questions,
                'tags': tags_page,
                'best_members': members_page}
     return render(request, 'hot.html', context)
 
 
+@login_required(login_url='/login/')
 def question(request, question_id, page_num=1):
-    question_page = Question.objects.get_id(question_id)
-
-    if request.method =='GET':
+    if request.method == 'GET':
         answer_form = forms.AnswerForm()
-    elif request.method == 'POST':
+    question_page = Question.objects.get_id(question_id)
+    if request.method == 'POST':
         answer_form = forms.AnswerForm(request.POST)
         if answer_form.is_valid():
-            answer = answer_form.save(request.user.user, question_page)
-            answers = paginate(Answer.objects.most_popular(question_page), request)
+            answer = answer_form.save(request, question_id)
+            answers = paginate(Answer.objects.mostPopular(question_page), request)
             page_num = answers.paginator.num_pages
             return redirect(reverse('question_page', args=(question_id, page_num)) + f'?page={page_num}#{answer.id}')
+
         else:
             answer_form.add_error("Invalid parameters")
 
     tags_page = models.TagManager.mostPopular()
     answers = paginate(Answer.objects.mostPopular(question_page), request)
-    best_members = models.TagManager.mostPopular()
+    best_members = models.Profile.objects.mostPopular()
     questions_page = Question.objects.new_questions()
     questions = paginate(questions_page, request)
     context = {'question': question_page,
@@ -74,10 +75,10 @@ def settings(request):
     elif request.method == 'POST':
         user_form = forms.SettingsForm(data=request.POST, files = request.FILES, instance = request.user)
         if user_form.is_valid():
-            user_form.save()
+            user_form.save(request)
             return redirect(reverse("settings"))
     tags_page = models.TagManager.mostPopular()
-    members_page = models.TagManager.mostPopular()
+    members_page = models.Profile.objects.mostPopular()
     context = {'tags': tags_page,
                'best_members': members_page,
                'form': user_form}
@@ -90,13 +91,14 @@ def registration(request):
     if request.method == 'POST':
         user_form = forms.RegistrationForm(request.POST)
         if user_form.is_valid():
-            user = user_form.save()
-            if user:
-                return redirect('index')
-            else:
-                user_form.add_error(field=None, error="User saving error!")
+            user_form.save(request)
+            username = user_form.cleaned_data.get('username')
+            password = user_form.cleaned_data.get('password')
+            user_auth = auth.authenticate(username=username, password=password)
+            auth.login(request, user_auth)
+            return redirect('index')
     tags_page = models.TagManager.mostPopular()
-    members_page = models.TagManager.mostPopular()
+    members_page = models.Profile.objects.mostPopular()
 
     context = {'tags': tags_page,
                'best_members': members_page,
@@ -110,34 +112,30 @@ def login(request):
     elif request.method == 'POST':
         login_form = forms.LoginForm(request.POST)
         if login_form.is_valid():
-            nickname = request.POST['nickname']
-            password = request.POST['password']
-            user = authenticate(nickname=nickname, password=password)
-            print(user)
+            user = auth.authenticate(request=request, **login_form.cleaned_data)
             if user:
                 auth.login(request, user)
                 return redirect('index')
             login_form.add_error(None, "Username or password is incorrect")
     tags_page = models.TagManager.mostPopular()
-    members_page = models.TagManager.mostPopular()
+    members_page = models.Profile.objects.mostPopular()
     context = {'tags': tags_page,
                'best_members': members_page,
                 'form': login_form}
     return render(request, "login.html", context=context)
 
 
-@login_required
+@login_required(login_url='/login/')
 def ask(request):
     if request.method == 'GET':
         question_form = forms.QuestionForm()
     if request.method == 'POST':
         question_form = forms.QuestionForm(request.POST)
         if question_form.is_valid():
-            profile = request.user
-            question = question_form.save(profile.user)
+            question = question_form.save(request.user.profile)
             return redirect('question', question.id)
     tags_page = models.TagManager.mostPopular()
-    members_page = models.TagManager.mostPopular()
+    members_page = models.Profile.objects.mostPopular()
     context = {'tags': tags_page,
                'best_members': members_page,
                'form': question_form}
@@ -145,19 +143,20 @@ def ask(request):
 
 
 def tag(request, tag_name):
-    questions = Question.objects.filter(tag__name__in=[tag_name]).order_by('id')
+    questions = Question.objects.filter(tags__name__in=[tag_name]).order_by('id')
     tags = models.TagManager.mostPopular()
-    members = models.TagManager.mostPopular()
     if not questions:
         return HttpResponseNotFound('Invalid tag question')
 
     paginator = Paginator(questions, per_page=10)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
+    members_page = models.Profile.objects.mostPopular()
 
     context = {'questions': page_obj,
                'tags': tags,
-               'best_members': members}
+               'best_members': members_page,
+               'tag_name': tag_name}
     return render(request, 'tag.html', context)
 
 

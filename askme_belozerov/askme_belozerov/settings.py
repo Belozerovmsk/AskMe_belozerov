@@ -42,10 +42,10 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 ]
 
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -84,7 +84,7 @@ DATABASES = {
         'USER': 'belozerov',
         'PASSWORD': '1357',
         'HOST': 'localhost',
- 'PORT': '5432',
+        'PORT': '5432',
     }
 }
 
@@ -127,14 +127,14 @@ STATIC_URL = 'static/'
 STATICFILES_DIRS = [
     BASE_DIR / 'static'
 ]
+
+MEDIA_ROOT = BASE_DIR / 'media'
+MEDIA_URL = '/media/'
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-AUTHENTICATION_BACKENDS = [
-    'django.contrib.auth.backends.ModelBackend',
-]
-
-MEDIA_ROOT = BASE_DIR / 'media'
-MEDIA_URL = '/media/'
+APPEND_SLASH = True
+LOGIN_URL = '/login'
